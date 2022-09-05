@@ -1,13 +1,14 @@
 const express = require("express");
 const { validateMovie, validateUser } = require("./validators.js");
 require("dotenv").config();
+const { hashPassword } = require("./auth.js");
 
 const app = express();
 app.use(express.json());
 
 const port = process.env.APP_PORT ?? 5000;
 
-const welcome = (req, res) => {
+const welcome = (_, res) => {
   res.send("Welcome to my favourite movie list");
 };
 
@@ -25,7 +26,7 @@ app.delete("/api/movies/:id", movieHandlers.deleteMovie);
 const userHandlers = require("./userHandlers");
 app.get("/api/users", userHandlers.getUsers);
 app.get("/api/users/:id", userHandlers.getUserById);
-app.post("/api/users", validateUser, userHandlers.postUser);
+app.post("/api/users", validateUser, hashPassword, userHandlers.postUser);
 app.put("/api/users/:id", validateUser, userHandlers.editUser);
 app.delete("/api/users/:id", userHandlers.deleteUser);
 
