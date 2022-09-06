@@ -53,7 +53,7 @@ app.delete("/api/movies/:id", movieHandlers.deleteMovie);
 
 // Users
 app.put("/api/users/:id", verifyUser, validateUser, userHandlers.editUser);
-app.delete("/api/users/:id", userHandlers.deleteUser);
+app.delete("/api/users/:id", verifyUser, userHandlers.deleteUser);
 
 app.listen(port, (err) => {
   if (err) {
