@@ -2,7 +2,7 @@ const database = require("./database");
 
 const getUsers = (req, res) => {
   let initialSql =
-    "SELECT firstname, lastname, email, city, language FROM users";
+    "SELECT id, firstname, lastname, email, city, language FROM users";
   const where = [];
 
   if (req.query.language != null) {
@@ -115,10 +115,30 @@ const deleteUser = (req, res) => {
     });
 };
 
+const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
+  const { email } = req.body;
+
+  database
+    .query("SELECT * FROM users WHERE email = ?", [email])
+    .then(([user]) => {
+      if (user[0] !== null) {
+        req.user = user[0];
+        next();
+      } else {
+        res.sdendStatus(401);
+      }
+    })
+    .catch((err) => {
+      res.status(500).send("User is not in database");
+      console.log(err);
+    });
+};
+
 module.exports = {
   getUsers,
   getUserById,
   postUser,
   editUser,
   deleteUser,
+  getUserByEmailWithPasswordAndPassToNext,
 };
